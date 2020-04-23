@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+import Logo from './components/Logo'
+import CardComponent from './components/Cards'
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/';
+import CountryForm from './components/Country'
+
+const theme = createMuiTheme({
+  typography: {
+      fontFamily: 'Montserrat'
+  },
+});
 
 function App() {
+  const [covData, setCovData] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const url = 'https://covid19.mathdro.id/api';
+      const data = await (await fetch(url)).json();
+      setCovData(data);
+    }
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <MuiThemeProvider theme={theme}>
+      <Logo />
+      { covData ? <CardComponent data={covData} /> : '' }
+      <CountryForm />
+    </MuiThemeProvider>
+  )
 }
 
-export default App;
+export default App
